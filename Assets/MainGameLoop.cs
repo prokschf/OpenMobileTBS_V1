@@ -1,36 +1,32 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
-public class Player
+public class GameMap : MonoBehaviour
 {
-    public bool IsHuman { get; set; } = false;
-
-    public string Name { get; set; }
-    public PlayerAI AI { get; set; }
-}
-
-public class PlayerAI
-{
-    public Player Player { get; set; }
-
-    public void ProcessTurn(MainGameLoop MainGameLoop)
+    
+    void Start()
     {
-
         
-        //Signal the MainGameLoop that the AI has ended its turn
-        MainGameLoop.EndTurn();
+    }
+
+    private void Update()
+    {
+        
     }
 }
 
 public class MainGameLoop : MonoBehaviour
 {
     public int TurnCounter { get; set; } = 0;
-    public Queue<Player> ActivePlayers { get; set; }
+    public Queue<Player> ActivePlayers { get; set; } = new Queue<Player>();
     public Player ActivePlayer { get; set; }
     public List<Player> Players { get; set; }
 
-
+    public GameMap Map { get; set; }
     public void EndTurn()
     {
         if (ActivePlayers.Count == 0)
@@ -38,18 +34,20 @@ public class MainGameLoop : MonoBehaviour
             //All player have ended their turn
             TurnCounter++;
             StartOfTheTurnProcessing();
+            //Create a new Queue for all Players Turns
+            ActivePlayers = new Queue<Player>(Players);
         }
         
         ActivePlayer = ActivePlayers.Dequeue();
         if (!ActivePlayer.IsHuman)
         {
-            ActivePlayer.AI.ProcessTurn(this);
+            ActivePlayer.ProcessTurn(this);
         }
     }
 
     void StartOfTheTurnProcessing()
     {
-        
+        print($"Start of the turn processing for turn {TurnCounter}");
     }
     
     // Start is called before the first frame update
@@ -57,12 +55,25 @@ public class MainGameLoop : MonoBehaviour
     {
         Players = new List<Player>()
         {
-            new Player()
+            new PlayerAI()
             {
-
+                Name = "Babylon"
+            },
+            new PlayerAI()
+            {
+                Name = "Rome"
+            },
+            new PlayerAI()
+            {
+                Name = "Carthago"
+            },
+            new HumanPlayer()
+            {
+                Name = "Smurfs"
             }
         };
-        ActivePlayer = Players[0];
+        gameObject.AddComponent<GameMap>();
+        EndTurn();
     }
 
     // Update is called once per frame
