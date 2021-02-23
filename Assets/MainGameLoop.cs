@@ -5,6 +5,32 @@ using System.Runtime.InteropServices;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
+public class City
+{
+    public string Name { get; set; }
+    public Player OwnerPlayer  { get; set; }
+    public int TurnFounded { get; set; }
+    public int Size { get; set; }
+}
+
+public class UnitType
+{
+    public List<UnitAction> Actions { get; set; }
+}
+
+public class Unit
+{
+    public UnitType UnitType { get; set; }
+    public Player OwnerPlayer  { get; set; }
+    
+}
+
+public class UnitAction
+{
+    public string Name { get; set; }
+}
+
+
 public class MainGameLoop : MonoBehaviour
 {
     public int TurnCounter { get; set; } = 0;
