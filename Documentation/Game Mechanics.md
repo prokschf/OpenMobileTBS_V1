@@ -1,6 +1,6 @@
 # Game Mechanics
 
-y### Project Page: *https://prokschf.github.io/OpenMobileTBS_V1/*
+### Project Page: *https://prokschf.github.io/OpenMobileTBS_V1/*
 
 
 ## Turns
