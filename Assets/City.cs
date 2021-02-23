@@ -7,7 +7,7 @@ public class City : MonoBehaviour
     public int TurnFounded { get; set; }
     public int Size { get; set; }
 
-    public int RessourceProduction(string ressource)
+    public int RessourceProduction(RessourceType ressource)
     {
         //Calculate the amount this city has produced for this resource
         return 0;
