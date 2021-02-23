@@ -1,34 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-
-public class City
-{
-    public string Name { get; set; }
-    public Player OwnerPlayer  { get; set; }
-    public int TurnFounded { get; set; }
-    public int Size { get; set; }
-}
-
-public class UnitType
-{
-    public List<UnitAction> Actions { get; set; }
-}
-
-public class Unit
-{
-    public UnitType UnitType { get; set; }
-    public Player OwnerPlayer  { get; set; }
-    
-}
-
-public class UnitAction
-{
-    public string Name { get; set; }
-}
 
 
 public class MainGameLoop : MonoBehaviour
@@ -39,8 +15,17 @@ public class MainGameLoop : MonoBehaviour
     public List<Player> Players { get; set; }
     
     public GameMap Map { get; set; }
+
+    public bool CanEndTurn()
+    {
+        return ActivePlayer.Units.All(x => x.LastMovedOnTurn == TurnCounter);
+    }
     public void EndTurn()
     {
+        if (!CanEndTurn())
+        {
+            throw new Exception("Turn not finished");
+        }
         if (ActivePlayers.Count == 0)
         {
             //All player have ended their turn
@@ -51,6 +36,7 @@ public class MainGameLoop : MonoBehaviour
         }
         
         ActivePlayer = ActivePlayers.Dequeue();
+        
         if (!ActivePlayer.IsHuman)
         {
             ActivePlayer.ProcessTurn(this);
@@ -60,6 +46,17 @@ public class MainGameLoop : MonoBehaviour
     void StartOfTheTurnProcessing()
     {
         print($"Start of the turn processing for turn {TurnCounter}");
+
+        foreach (var player in Players)
+        {
+            foreach (var city in player.Cities)
+            {
+                foreach (var ressource in player.Ressources)
+                {
+                    player.Ressources[ressource.Key] += city.RessourceProduction(ressource.Key);
+                }
+            } 
+        }
     }
     
     // Start is called before the first frame update
