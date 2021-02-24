@@ -145,6 +145,10 @@ public class MainGameLoop : MonoBehaviour
         babylon.Cities.Add(babylonCity);
 
 
+        var babylonUnit = GameObject.CreatePrimitive(PrimitiveType.Capsule).AddComponent<Unit>();
+        babylonUnit.OwnerPlayer = babylon;
+        babylonUnit.MapTile = map.MapTiles[23];
+        
         EndTurn();
     }
 
