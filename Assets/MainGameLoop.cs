@@ -18,7 +18,8 @@ public class MainGameLoop : MonoBehaviour
 
     public bool CanEndTurn()
     {
-        return ActivePlayer.Units.All(x => x.LastMovedOnTurn == TurnCounter);
+        return ActivePlayer == null || 
+               ActivePlayer.Units.TrueForAll(x => x.LastMovedOnTurn == TurnCounter);
     }
     public void EndTurn()
     {
