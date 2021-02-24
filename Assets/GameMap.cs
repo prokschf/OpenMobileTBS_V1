@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class GameMap : MonoBehaviour
 {
-    public GameMapTile MapTiles { get; set; }
+    public Dictionary<int, GameMapTile> MapTiles { get; set; } = new Dictionary<int, GameMapTile>();
 
     void Start()
     {

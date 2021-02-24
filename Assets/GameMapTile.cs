@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class GameMapTile
+public class GameMapTile : MonoBehaviour
 {
-    /// <summary>
-    /// Holds a GameObject for the visual representation of this GameMapTile
-    /// </summary>
-    public GameObject GameObject { get; set; }
-    
-    public List<TravelConnection> TravelConnections { get; set; }
+    public List<TravelConnection> TravelConnections { get; set; } = new List<TravelConnection>();
+
+    public void Start()
+    {
+        transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+    }
 }

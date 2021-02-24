@@ -82,7 +82,67 @@ public class MainGameLoop : MonoBehaviour
                 Name = "Smurfs"
             }
         };
-        gameObject.AddComponent<GameMap>();
+        var map = gameObject.AddComponent<GameMap>();
+        var mapWidth = 10;
+        var mapHeight = 10;
+        for (int x = 0; x < mapWidth; x++)
+        {
+            for (int z = 0; z < mapHeight; z++)
+            {
+                var i = x * mapHeight + z;
+                map.MapTiles[i] = GameObject.CreatePrimitive(PrimitiveType.Cube).AddComponent<GameMapTile>();
+                map.MapTiles[i].transform.Translate(x, 0, z);
+            }
+        }
+        //Connect adjacent MapTiles
+
+        for (int x = 0; x < mapWidth; x++)
+        {
+            for (int z = 0; z < mapHeight; z++)
+            {
+                var i = x * mapHeight + z;
+                if (x > 0)
+                {
+                    var eastConnection =
+                        GameObject.CreatePrimitive(PrimitiveType.Cylinder).AddComponent<TravelConnection>();
+                    eastConnection.Source = map.MapTiles[x * 10 + z];
+                    eastConnection.Destination = map.MapTiles[(x - 1) * 10 + z];
+                    eastConnection.Weight = 1;
+                    map.MapTiles[i].TravelConnections.Add(eastConnection);
+                }
+                if (x < mapWidth - 1)
+                {
+                    var westConnection =
+                        GameObject.CreatePrimitive(PrimitiveType.Cylinder).AddComponent<TravelConnection>();
+                    westConnection.Source = map.MapTiles[i];
+                    westConnection.Destination = map.MapTiles[(x + 1) * 10 + z];
+                    westConnection.Weight = 1;
+                    map.MapTiles[i].TravelConnections.Add(westConnection);
+                }
+                if (z > 0)
+                {
+                    var northConnection =
+                        GameObject.CreatePrimitive(PrimitiveType.Cylinder).AddComponent<TravelConnection>();
+                    northConnection.Source = map.MapTiles[i];
+                    northConnection.Destination = map.MapTiles[x * 10 + z - 1];
+                    northConnection.Weight = 1;
+                    map.MapTiles[i].TravelConnections.Add(northConnection);
+                }
+                if (z < mapHeight - 1)
+                {
+                    var southConnection =
+                        GameObject.CreatePrimitive(PrimitiveType.Cylinder).AddComponent<TravelConnection>();
+                    southConnection.Source = map.MapTiles[i];
+                    southConnection.Destination = map.MapTiles[x * 10 + z + 1];
+                    southConnection.Weight = 1;
+                    map.MapTiles[i].TravelConnections.Add(southConnection);
+                }
+            }
+        }
+
+        
+
+
         EndTurn();
     }
 
