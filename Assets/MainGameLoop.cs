@@ -63,24 +63,17 @@ public class MainGameLoop : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        var Babylon = GameObject.CreatePrimitive(PrimitiveType.Sphere).AddComponent<PlayerAI>();
+        var Rome = GameObject.CreatePrimitive(PrimitiveType.Sphere).AddComponent<PlayerAI>();
+        var Carthage = GameObject.CreatePrimitive(PrimitiveType.Sphere).AddComponent<PlayerAI>();
+        var Smurfs = GameObject.CreatePrimitive(PrimitiveType.Sphere).AddComponent<HumanPlayer>();
+        
         Players = new List<Player>()
         {
-            new PlayerAI()
-            {
-                Name = "Babylon"
-            },
-            new PlayerAI()
-            {
-                Name = "Rome"
-            },
-            new PlayerAI()
-            {
-                Name = "Carthago"
-            },
-            new HumanPlayer()
-            {
-                Name = "Smurfs"
-            }
+            Babylon,
+            Rome,
+            Carthage,
+            Smurfs
         };
         var map = gameObject.AddComponent<GameMap>();
         var mapWidth = 10;
