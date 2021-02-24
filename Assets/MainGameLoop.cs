@@ -12,7 +12,7 @@ public class MainGameLoop : MonoBehaviour
     public int TurnCounter { get; set; } = 0;
     public Queue<Player> ActivePlayers { get; set; } = new Queue<Player>();
     public Player ActivePlayer { get; set; }
-    public List<Player> Players { get; set; }
+    public List<Player> Players { get; set; } = new List<Player>();
     
     public GameMap Map { get; set; }
 
@@ -63,18 +63,20 @@ public class MainGameLoop : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        var Babylon = GameObject.CreatePrimitive(PrimitiveType.Sphere).AddComponent<PlayerAI>();
-        var Rome = GameObject.CreatePrimitive(PrimitiveType.Sphere).AddComponent<PlayerAI>();
-        var Carthage = GameObject.CreatePrimitive(PrimitiveType.Sphere).AddComponent<PlayerAI>();
-        var Smurfs = GameObject.CreatePrimitive(PrimitiveType.Sphere).AddComponent<HumanPlayer>();
+        var babylon = GameObject.CreatePrimitive(PrimitiveType.Sphere).AddComponent<PlayerAI>();
+        babylon.Name = "Babylon (Civ)";
+        var rome = GameObject.CreatePrimitive(PrimitiveType.Sphere).AddComponent<PlayerAI>();
+        rome.Name = "Rome (Civ)";
+        var carthage = GameObject.CreatePrimitive(PrimitiveType.Sphere).AddComponent<PlayerAI>();
+        carthage.Name = "Carthage (Civ)";
+        var smurfs = GameObject.CreatePrimitive(PrimitiveType.Sphere).AddComponent<HumanPlayer>();
+        smurfs.Name = "Smurfs (Civ)";
         
-        Players = new List<Player>()
-        {
-            Babylon,
-            Rome,
-            Carthage,
-            Smurfs
-        };
+        Players.Add(babylon);
+        Players.Add(rome);
+        Players.Add(carthage);
+        Players.Add(smurfs);
+
         var map = gameObject.AddComponent<GameMap>();
         var mapWidth = 10;
         var mapHeight = 10;
@@ -133,7 +135,14 @@ public class MainGameLoop : MonoBehaviour
             }
         }
 
+        var babylonCity = GameObject.CreatePrimitive(PrimitiveType.Capsule).AddComponent<City>();
+        babylonCity.name = "Babylon (City)";
+        babylonCity.OwnerPlayer = babylon;
+        babylonCity.TurnFounded = 0;
+        babylonCity.Size = 5;
+        babylonCity.MapTile = map.MapTiles[35];
         
+        babylon.Cities.Add(babylonCity);
 
 
         EndTurn();

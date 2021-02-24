@@ -8,6 +8,6 @@ public abstract class Player : MonoBehaviour
     public string Name { get; set; }
     public List<Unit> Units { get; set; } = new List<Unit>();
     public List<City> Cities { get; set; } = new List<City>();
-    
-    public Dictionary<RessourceType, int> Ressources { get; set; }
+
+    public Dictionary<RessourceType, int> Ressources { get; set; } = new Dictionary<RessourceType, int>();
 }
