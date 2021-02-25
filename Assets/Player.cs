@@ -22,7 +22,7 @@ public abstract class Player : MonoBehaviour
             }
             return _activeUnit;
         }
-        private set
+        set
         {
             _activeUnit = value;
         }

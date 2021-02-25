@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
@@ -7,6 +9,8 @@ public class Unit : MonoBehaviour
     public UnitType UnitType { get; set; }
     public Player OwnerPlayer  { get; set; }
     public int LastMovedOnTurn { get; set; }
+    public GameRunner GameRunner { get; set; }
+    public List<UnitAction> UnitActions { get; set; } = new List<UnitAction>();
     [SerializeField] private GameMapTile _mapTile;
     private Animator _animator;
 
@@ -22,8 +26,9 @@ public class Unit : MonoBehaviour
             }
         }
     }
-
-    public bool CanWalkTo(GameMapTile mapTileToCheck) => MapTile.TravelConnections.Any(x => x.Destination == mapTileToCheck);
+    
+    public bool CanWalkTo(GameMapTile mapTileToCheck) => MapTile.TravelConnections.Any(x => x.Destination == mapTileToCheck) 
+                                                         && GameRunner.TurnCounter > LastMovedOnTurn;
 
     public void Start()
     {
@@ -40,7 +45,7 @@ public class Unit : MonoBehaviour
             Debug.Log("Unit {ID} has no assigned MapTile");
         }
 
-        var targetPosition = MapTile.transform.position + Vector3.up * 0.25f;
+        var targetPosition = MapTile.transform.position;
         transform.position = Vector3.MoveTowards(transform.position, targetPosition, 0.8f * Time.deltaTime);
         if (transform.position == targetPosition && _animator.GetBool("IsWalking"))
         {

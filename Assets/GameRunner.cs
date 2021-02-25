@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 
 public class GameRunner : MonoBehaviour
@@ -90,8 +91,15 @@ public class GameRunner : MonoBehaviour
             for (int z = 0; z < mapHeight; z++)
             {
                 var i = x * mapHeight + z;
-                map.MapTiles[i] = GameObject.CreatePrimitive(PrimitiveType.Cube).AddComponent<GameMapTile>();
-                map.MapTiles[i].transform.Translate(x, 0, z);
+                if (Random.value > 0.5f)
+                {
+                    map.MapTiles[i] = Instantiate(Resources.Load("Examples Water/Prefabs/Water Surface") as GameObject).AddComponent<GameMapTile>();
+                }
+                else
+                {
+                    map.MapTiles[i] = Instantiate(Resources.Load("Plane") as GameObject).AddComponent<GameMapTile>();
+                }
+                map.MapTiles[i].transform.position = new Vector3(x, 0, z);
                 map.MapTiles[i].GameRunner = this;
             }
         }
@@ -155,14 +163,17 @@ public class GameRunner : MonoBehaviour
         var babylonUnit = Instantiate(Resources.Load("Toon_RTS_demo/models/ToonRTS_demo_Knight") as GameObject).AddComponent<Unit>();
         //babylon.Units.Add(babylonUnit);
         babylonUnit.OwnerPlayer = babylon;
+        babylonUnit.GameRunner = this;
         babylonUnit.MapTile = map.MapTiles[23];
         babylonUnit.LastMovedOnTurn = 1;
-
+        babylonUnit.UnitActions.Add(new MoveOnLandAction());
         
         var smurfUnit = Instantiate(Resources.Load("Toon_RTS_demo/models/ToonRTS_demo_Knight") as GameObject).AddComponent<Unit>();
         smurfs.Units.Add(smurfUnit);
+        smurfUnit.GameRunner = this;
         smurfUnit.OwnerPlayer = smurfs;
         smurfUnit.MapTile = map.MapTiles[17];
+        smurfUnit.UnitActions.Add(new MoveOnLandAction());
         
         EndTurn();
     }

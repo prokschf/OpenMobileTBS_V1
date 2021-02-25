@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UIElements;
 
 public class TravelConnection : MonoBehaviour
 {
@@ -50,6 +51,7 @@ public class TravelConnection : MonoBehaviour
     
     public void Start()
     {
+        gameObject.SetActive(false); 
         transform.localScale = new Vector3(0.5f, 0.25f, 0.5f);
     }    
 }
