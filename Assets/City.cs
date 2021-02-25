@@ -15,7 +15,7 @@ public class City : MonoBehaviour
         set
         {
             _mapTile = value;
-            transform.position = _mapTile.transform.position + Vector3.up * 0.5f;
+            transform.position = _mapTile.transform.position + Vector3.up * 0.25f;
         }
     }
 
@@ -27,6 +27,6 @@ public class City : MonoBehaviour
 
     public void Start()
     {
-        transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
     }
 }

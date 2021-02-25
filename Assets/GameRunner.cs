@@ -3,13 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
 
-public class MainGameLoop : MonoBehaviour
+public class GameRunner : MonoBehaviour
 {
-    public int TurnCounter { get; set; } = 0;
+    public int TurnCounter { get; set; } = 1;
     public Queue<Player> ActivePlayers { get; set; } = new Queue<Player>();
     public Player ActivePlayer { get; set; }
     public List<Player> Players { get; set; } = new List<Player>();
@@ -40,7 +41,7 @@ public class MainGameLoop : MonoBehaviour
         
         if (!ActivePlayer.IsHuman)
         {
-            ActivePlayer.ProcessTurn(this);
+            ActivePlayer.ProcessTurn();
         }
     }
 
@@ -65,12 +66,16 @@ public class MainGameLoop : MonoBehaviour
     {
         var babylon = GameObject.CreatePrimitive(PrimitiveType.Sphere).AddComponent<PlayerAI>();
         babylon.Name = "Babylon (Civ)";
+        babylon.GameRunner = this;
         var rome = GameObject.CreatePrimitive(PrimitiveType.Sphere).AddComponent<PlayerAI>();
         rome.Name = "Rome (Civ)";
+        rome.GameRunner = this;
         var carthage = GameObject.CreatePrimitive(PrimitiveType.Sphere).AddComponent<PlayerAI>();
         carthage.Name = "Carthage (Civ)";
+        carthage.GameRunner = this;
         var smurfs = GameObject.CreatePrimitive(PrimitiveType.Sphere).AddComponent<HumanPlayer>();
         smurfs.Name = "Smurfs (Civ)";
+        smurfs.GameRunner = this;
         
         Players.Add(babylon);
         Players.Add(rome);
@@ -87,6 +92,7 @@ public class MainGameLoop : MonoBehaviour
                 var i = x * mapHeight + z;
                 map.MapTiles[i] = GameObject.CreatePrimitive(PrimitiveType.Cube).AddComponent<GameMapTile>();
                 map.MapTiles[i].transform.Translate(x, 0, z);
+                map.MapTiles[i].GameRunner = this;
             }
         }
         //Connect adjacent MapTiles
@@ -135,7 +141,8 @@ public class MainGameLoop : MonoBehaviour
             }
         }
 
-        var babylonCity = GameObject.CreatePrimitive(PrimitiveType.Capsule).AddComponent<City>();
+        
+        var babylonCity = Instantiate(Resources.Load("Models/Unique_Buildings/crusader_headquarter") as GameObject).AddComponent<City>();
         babylonCity.name = "Babylon (City)";
         babylonCity.OwnerPlayer = babylon;
         babylonCity.TurnFounded = 0;
@@ -145,9 +152,17 @@ public class MainGameLoop : MonoBehaviour
         babylon.Cities.Add(babylonCity);
 
 
-        var babylonUnit = GameObject.CreatePrimitive(PrimitiveType.Capsule).AddComponent<Unit>();
+        var babylonUnit = Instantiate(Resources.Load("Toon_RTS_demo/models/ToonRTS_demo_Knight") as GameObject).AddComponent<Unit>();
+        //babylon.Units.Add(babylonUnit);
         babylonUnit.OwnerPlayer = babylon;
         babylonUnit.MapTile = map.MapTiles[23];
+        babylonUnit.LastMovedOnTurn = 1;
+
+        
+        var smurfUnit = Instantiate(Resources.Load("Toon_RTS_demo/models/ToonRTS_demo_Knight") as GameObject).AddComponent<Unit>();
+        smurfs.Units.Add(smurfUnit);
+        smurfUnit.OwnerPlayer = smurfs;
+        smurfUnit.MapTile = map.MapTiles[17];
         
         EndTurn();
     }
