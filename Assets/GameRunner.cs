@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using UnityEditor.Build.Reporting;
+using UnityEditor.Experimental.GraphView;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -95,10 +96,10 @@ public class GameRunner : MonoBehaviour
                 {
                     map.MapTiles[i] = Instantiate(Resources.Load("Examples Water/Prefabs/Water Surface") as GameObject).AddComponent<GameMapTile>();
                 }
-                else
+                else 
                 {
                     map.MapTiles[i] = Instantiate(Resources.Load("Plane") as GameObject).AddComponent<GameMapTile>();
-                }
+                } 
                 map.MapTiles[i].transform.position = new Vector3(x, 0, z);
                 map.MapTiles[i].GameRunner = this;
             }
