@@ -41,6 +41,5 @@ public class Cam : MonoBehaviour {
         Camera.main.transform.position = new Vector3(Camera.main.transform.position.x,
             Mathf.Clamp(Camera.main.transform.position.y  - increment, zoomOutMin, zoomOutMax),
             Camera.main.transform.position.z);
-        Debug.Log(Camera.main.transform.position.y );
     }
 }
