@@ -268,13 +268,15 @@ MonoBehaviour:
   Height: 256
   HeightMapWidth: 4096
   HeightMapHeight: 4096
+  AlphaMapResolution: 4069
   InstantiateTiles: 0
   growStrenthFalloff: 0.7
   SplatAmount: 150
+  Brushes: []
   TerrainObject: {fileID: 630469631}
   Recreate: 1
   GrowChildrenAmount: 4
-  MaxElevation: 1
+  MaxElevation: 0.3
   MinElevation: 0
 --- !u!1001 &312102651
 PrefabInstance:
@@ -387,7 +389,7 @@ TerrainCollider:
   m_GameObject: {fileID: 630469629}
   m_Material: {fileID: 0}
   m_Enabled: 1
-  m_TerrainData: {fileID: 15600000, guid: e245fe37d38ee7a41b02895757ea2edc, type: 2}
+  m_TerrainData: {fileID: 15600000, guid: 39630a2958a312748a866bd7d6051961, type: 2}
   m_EnableTreeColliders: 1
 --- !u!218 &630469631
 Terrain:
@@ -398,7 +400,7 @@ Terrain:
   m_GameObject: {fileID: 630469629}
   m_Enabled: 1
   serializedVersion: 6
-  m_TerrainData: {fileID: 0}
+  m_TerrainData: {fileID: 15600000, guid: 39630a2958a312748a866bd7d6051961, type: 2}
   m_TreeDistance: 5000
   m_TreeBillboardDistance: 50
   m_TreeCrossFadeLength: 5
@@ -413,7 +415,7 @@ Terrain:
   m_DrawInstanced: 0
   m_DrawTreesAndFoliage: 1
   m_ReflectionProbeUsage: 1
-  m_MaterialTemplate: {fileID: 2100000, guid: 754229dc66b057d40bcd2ebe48424571, type: 2}
+  m_MaterialTemplate: {fileID: 10650, guid: 0000000000000000f000000000000000, type: 0}
   m_BakeLightProbesForTrees: 1
   m_PreserveTreePrototypeLayers: 0
   m_DeringLightProbesForTrees: 1
