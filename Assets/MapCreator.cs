@@ -19,6 +19,8 @@ public class MapCreator : MonoBehaviour
     public float growStrenthFalloff = 0.6f;
     public int SplatAmount = 200;
 
+    public Texture2D MountainBrush;
+
     public float[,] HeightMap  { get; set; }
     public Terrain TerrainObject; 
     public bool Recreate;
@@ -87,10 +89,26 @@ public class MapCreator : MonoBehaviour
                     var tly = (int)(y / HeightMapToTileRatioY);
                     var xProp = (float)x / HeightMapToTileRatioX - tlx;
                     var yProp = (float)y / HeightMapToTileRatioY - tly;
-                    var val = Map[tlx, tly].Elevation * (1 - xProp) * (1 - yProp) +
+                    
+                    /*var val = Map[tlx, tly].Elevation * (1 - xProp) * (1 - yProp) +
                               Map[tlx + 1, tly].Elevation * xProp * (1 - yProp) +
                               Map[tlx, tly + 1].Elevation * (1 - xProp) * yProp +
-                              Map[tlx + 1, tly + 1].Elevation * xProp * yProp;
+                              Map[tlx + 1, tly + 1].Elevation * xProp * yProp;*/
+                    var val = Map[tlx, tly].Elevation;
+
+                    if (!String.IsNullOrWhiteSpace(Map[tlx, tly].Terrain))
+                    {
+                        //Apply stamp on the middle of this thing
+                    
+                    
+                        //Radius falloff??
+                        //Hwo to get the brush
+                    
+                        //Get coordinate as UV
+                        val += MountainBrush.GetPixelBilinear(1 - xProp, 1 - yProp).r * 0.2f;
+                    }
+                    
+                    
                     HeightMap[x, y] = val;
                 }
             }
