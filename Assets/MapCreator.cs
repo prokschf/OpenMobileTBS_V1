@@ -28,6 +28,8 @@ public class MapCreator : MonoBehaviour
     public bool InstantiateTiles = false;
     public int BrushStrokeCount = 10;
     public Transform Ocean;
+    public bool DrawGrid = true;
+    public float BlendThreshold = 0.8f;
     public (string Terrain, int ID, float Elevation)[,] Map { get; set; }
     public float growStrenthFalloff = 0.6f;
     public int SplatAmount = 200;
@@ -54,6 +56,45 @@ public class MapCreator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (DrawGrid)
+        {
+            var gtr = 100.0f / Width;
+            for (int x = 1; x < Width - 1; x++)
+            {
+                for (int y = 1; y < Height - 1; y++)
+                {
+                    var xP = x * gtr;
+                    var yP = y * gtr;
+                    if (Map?[y, x] == null)
+                    {
+                        continue;
+                        
+                    }
+                    
+                    /*if (Map?[y, x].Terrain != null && Map[y, x].Terrain != "")
+                    {
+                        Debug.DrawLine(new Vector3(xP + gtr, .1f, yP), new Vector3(xP + gtr, .1f, yP + gtr), Color.red);
+                        Debug.DrawLine(new Vector3(xP, .1f, yP + gtr), new Vector3(xP + gtr, .1f, yP + gtr), Color.red);
+                    }
+                    else
+                    {
+                        Debug.DrawLine(new Vector3(xP + gtr, .1f, yP), new Vector3(xP + gtr, .1f, yP + gtr));
+                        Debug.DrawLine(new Vector3(xP, .1f, yP + gtr), new Vector3(xP + gtr, .1f, yP + gtr));
+                    }*/
+
+                    if (Map[y, x].ID != Map[y + 1, x].ID)
+                    {
+                        Debug.DrawLine(new Vector3(xP, .12f, yP + gtr), new Vector3(xP + gtr, .12f, yP + gtr), Color.red);
+                    }
+                    
+                    if (Map[y, x].ID != Map[y, x + 1].ID)
+                    {
+                        Debug.DrawLine(new Vector3(xP + gtr, .12f, yP), new Vector3(xP + gtr, .12f, yP + gtr), Color.red);
+                    }
+                }
+            }
+        }
+        
         if (Recreate)
         {
             Recreate = false;
@@ -110,8 +151,8 @@ public class MapCreator : MonoBehaviour
                     normalMapTexture = Resources.Load("Terrain Assets/TerrainTextures/rock_normal") as Texture2D,
                     maskMapTexture = Resources.Load("Terrain Assets/TerrainTextures/rock_mask") as Texture2D,
                     name = "Rock",
-                    normalScale = 5,
-                    tileSize = new Vector2(0.5f, 0.5f)
+                    normalScale = 1,
+                    tileSize = new Vector2(0.2f, 0.2f)
                 },
                 new TerrainLayer()
                 {
@@ -119,7 +160,8 @@ public class MapCreator : MonoBehaviour
                     normalMapTexture = Resources.Load("Terrain Assets/TerrainTextures/snow_normal") as Texture2D,
                     maskMapTexture = Resources.Load("Terrain Assets/TerrainTextures/snow_mask") as Texture2D,
                     name = "Snow",
-                    normalScale = 5
+                    tileSize = new Vector2(0.2f, 0.2f),
+                    normalScale = 1
                 },
                 new TerrainLayer()
                 {
@@ -127,8 +169,8 @@ public class MapCreator : MonoBehaviour
                     normalMapTexture = Resources.Load("Terrain Assets/TerrainTextures/moss_normal") as Texture2D,
                     maskMapTexture = Resources.Load("Terrain Assets/TerrainTextures/moss_mask") as Texture2D,
                     name = "Moss",
-                    normalScale = 5,
-                    tileSize = new Vector2(0.5f, 0.5f)
+                    normalScale = 1,
+                    tileSize = new Vector2(0.2f, 0.2f)
                 },
                 new TerrainLayer()
                 {
@@ -136,60 +178,26 @@ public class MapCreator : MonoBehaviour
                     normalMapTexture = Resources.Load("GrassClumbs_normal") as Texture2D,
                     //maskMapTexture = Resources.Load("Terrain Assets/TerrainTextures/sand_mask") as Texture2D,
                     name = "Grass",
-                    normalScale = 5,
-                    tileSize = new Vector2(0.5f, 0.5f)
+                    normalScale = 1,
+                    tileSize = new Vector2(0.2f, 0.2f)
                 } ,
                 new TerrainLayer()
                 {
                     diffuseTexture = Resources.Load("NaturalTilingTextures/CraterLakeRed/T_CraterLakeRed_BC") as Texture2D,
                     normalMapTexture = Resources.Load("NaturalTilingTextures/CraterLakeRed/T_CraterLakeRed_N") as Texture2D,
                     //maskMapTexture = Resources.Load("NaturalTilingTextures/CraterLakeRed/T_CraterLakeRed_BC") as Texture2D,
-                    normalScale = 5,
+                    normalScale = 1,
                     name = "CraterLakeRed",
-                    tileSize = new Vector2(0.5f, 0.5f)
+                    tileSize = new Vector2(0.2f, 0.2f)
                 },
             };
             AlphaMaps = new float[AlphaMapResolution, AlphaMapResolution, TerrainObject.terrainData.terrainLayers.Length];
             TerrainObject.terrainData.alphamapResolution = AlphaMapResolution;
-            
+        
 
             
-            var HeightMapToTileRatioX = HeightMapWidth / Width;
-            var HeightMapToTileRatioY = HeightMapHeight / Height;
-            
-            for (int x = 0; x < HeightMapWidth - HeightMapToTileRatioX; x++)
-            {
-                for (int y = 0; y < HeightMapHeight - HeightMapToTileRatioY; y++)
-                {
-                    var tlx = (int)(x / HeightMapToTileRatioX);
-                    var tly = (int)(y / HeightMapToTileRatioY);
-                    var xProp = (float)x / HeightMapToTileRatioX - tlx;
-                    var yProp = (float)y / HeightMapToTileRatioY - tly;
-                    int alphaX = (int)((float)x / ((float)HeightMapWidth / (float)AlphaMapResolution));
-                    int alphaY = (int)((float)y / ((float)HeightMapHeight / (float)AlphaMapResolution));
-
-                    var val = 0;
-                    /*var val = Map[tlx, tly].Elevation * (1 - xProp) * (1 - yProp) +
-                              Map[tlx + 1, tly].Elevation * xProp * (1 - yProp) +
-                              Map[tlx, tly + 1].Elevation * (1 - xProp) * yProp +
-                              Map[tlx + 1, tly + 1].Elevation * xProp * yProp;*/
-                    //var val = Map[tlx, tly].Elevation;
-                    HeightMap[x, y] = val;
-                    if (val > 0.11f)
-                    {
-                        //AlphaMaps[alphaX, alphaY, 2] = 1.0f; //Moss
-                    }
-                    else
-                    {
-                        //AlphaMaps[alphaX, alphaY, 3] = 1.0f; //Sand
-                    }
-                }
-            }
-
-
-
-            
-            ApplyTerrainBrushes();
+            //ApplyTerrainBrushes();
+            ElevateTiles();
 
             TerrainObject.terrainData.SetAlphamaps(0, 0, AlphaMaps);
             TerrainObject.terrainData.SetHeights(0, 0, HeightMap);
@@ -197,6 +205,76 @@ public class MapCreator : MonoBehaviour
         }
     }
 
+    public void ElevateTiles()
+    {
+        var MapToHeightMap = (float)Width / (float)HeightMapWidth;
+        for (int x = 0; x < HeightMapWidth; x++)
+        {
+            for (int y = 0; y < HeightMapHeight; y++)
+            {
+                var tlx = (int)(x * MapToHeightMap);
+                var tly = (int)(y * MapToHeightMap);
+                if (tlx <= 1 || tly <= 1 || tlx >= Width - 1 || tly >= Height - 1)
+                {
+                    continue;
+                }
+
+                var xProp = (x * MapToHeightMap) - (int) (x * MapToHeightMap) - 0.5f * MapToHeightMap;
+                var yProp = (y * MapToHeightMap) - (int) (y * MapToHeightMap) - 0.5f * MapToHeightMap;
+      
+                HeightMap[x, y] = Map[tlx, tly].Elevation;
+                if (xProp > 0.8f && Map[tlx + 1, tly].Elevation != Map[tlx, tly].Elevation)
+                {
+                    var threshold = BlendThreshold;
+                    var x1 = threshold;
+                    var x2 = 1 + (1 - threshold);
+                    var h1 = Map[tlx, tly].Elevation;
+                    var h2 = Map[tlx + 1, tly].Elevation;
+                    var m = (h2 - h1) / (x2 - x1);
+                    var n = -m * threshold;
+                    var val = m * xProp + n;
+                    HeightMap[x, y] += val;
+                }
+                if (yProp > 0.8f && Map[tlx, tly + 1].Elevation != Map[tlx, tly].Elevation)
+                {
+                    var threshold = BlendThreshold;
+                    var x1 = threshold;
+                    var x2 = 1 + (1 - threshold);
+                    var h1 = Map[tlx, tly].Elevation;
+                    var h2 = Map[tlx, tly + 1].Elevation;
+                    var m = (h2 - h1) / (x2 - x1);
+                    var n = -m * threshold;
+                    var val = m * yProp + n;
+                    HeightMap[x, y] += val;
+                }
+                if (yProp < 0.2f && Map[tlx, tly - 1].Elevation != Map[tlx, tly].Elevation)
+                {
+                    var threshold = 1 - BlendThreshold;
+                    var x1 = -threshold;
+                    var x2 = threshold;
+                    var h1 = Map[tlx, tly - 1].Elevation;
+                    var h2 = Map[tlx, tly].Elevation;
+                    var m = (h2 - h1) / (x2 - x1);
+                    var n = -m * threshold;
+                    var val = m * yProp + n;
+                    HeightMap[x, y] += val;
+                }   
+                if (xProp < 0.2f && Map[tlx - 1, tly].Elevation != Map[tlx, tly].Elevation)
+                {
+                    var threshold = 1 - BlendThreshold;
+                    var x1 = -threshold;
+                    var x2 = threshold;
+                    var h1 = Map[tlx - 1, tly].Elevation;
+                    var h2 = Map[tlx, tly].Elevation;
+                    var m = (h2 - h1) / (x2 - x1);
+                    var n = -m * threshold;
+                    var val = m * xProp + n;
+                    HeightMap[x, y] += val;
+                }                  
+                AlphaMaps[x, y, 0] = 1.0f;
+            }            
+        }
+    }
     public void ApplyTerrainBrushes()
     {
         foreach (var mapTileKVP in  MapTiles)
@@ -210,7 +288,8 @@ public class MapCreator : MonoBehaviour
             {
                 var x = Random.Range(tile.TopLeft.x, tile.BottomRight.x) * HeightMapToTileRatioX;
                 var y = Random.Range(tile.TopLeft.y, tile.BottomRight.y) * HeightMapToTileRatioY;
-                var size = (int)(Random.Range((tile.BottomRight.y - tile.TopLeft.y) * 0.5f, tile.BottomRight.y - tile.TopLeft.y)) * HeightMapToTileRatioX; 
+                //var size = (int)(Random.Range((tile.BottomRight.y - tile.TopLeft.y) * 0.5f, tile.BottomRight.y - tile.TopLeft.y)) * HeightMapToTileRatioX;
+                var size = (int)(tile.BottomRight.y - tile.TopLeft.y) * HeightMapToTileRatioX; 
 
                 BakeBrushOnHeightMap(tile,
                     new Vector2(x, y),
@@ -238,7 +317,6 @@ public class MapCreator : MonoBehaviour
                 var xProp = (float) (x - pos.x) / size;
                 var yProp = (float) (y - pos.y) / size;
 
-                
                 if (brush != null)
                 {
                     int mapX = (int)x / (HeightMapWidth / Width);
@@ -246,29 +324,36 @@ public class MapCreator : MonoBehaviour
                     int alphaX = (int)((float)x / ((float)HeightMapWidth / (float)AlphaMapResolution));
                     int alphaY = (int)((float)y / ((float)HeightMapHeight / (float)AlphaMapResolution));
                         
-                    if (x > 0 && x < HeightMapWidth && y > 0 && y < HeightMapHeight)
+                    if (x > 0 && x < HeightMapWidth - 1 && y > 0 && y < HeightMapHeight - 1)
                     {
-                       // if (Map[mapX, mapY].ID == tile.ID)
+                        if (Map[mapX, mapY].Terrain == tile.Terrain)
                         {
-                            HeightMap[(int) x, (int) y] = Math.Max(HeightMap[(int) x, (int) y],
-                                brush.GetPixelBilinear(xProp, yProp).r * 0.2f);
+                            var distX = (xProp - size / 2) / size;
+                            var distY = (yProp - size / 2) / size;
+                            var dist =  Mathf.Sqrt(distX * distX + distY * distY);
 
-                                if (tile.Terrain == "Mountain")
+                            
+                            
+                            HeightMap[(int) x, (int) y] = Math.Max(HeightMap[(int) x, (int) y],
+                                brush.GetPixelBilinear(xProp, yProp).r * 0.2f * (1.0f - dist));
+                            
+                            AlphaMaps[(int) alphaX, (int) alphaY, 0] = 1.0f;
+                                /*if (tile.Terrain == "Mountain")
                                 {
-                                    AlphaMaps[(int) alphaX, (int) alphaY, 4] = 1.0f;
+                                    AlphaMaps[(int) alphaX, (int) alphaY, 0] = 1.0f;
                                 }
                                 if (tile.Terrain == "Hills" || tile.Terrain == "Erosion")
                                 {
-                                    AlphaMaps[(int) alphaX, (int) alphaY, 3] = 1.0f;
+                                    AlphaMaps[(int) alphaX, (int) alphaY, 2] = 1.0f;
                                 }
                                 if (tile.Terrain == "Plateau")
                                 {
-                                    AlphaMaps[(int) alphaX, (int) alphaY, 3] = 1.0f;
+                                    AlphaMaps[(int) alphaX, (int) alphaY, 4] = 1.0f;
                                 }
                                 if (tile.Terrain == "Ridge" || tile.Terrain == "Canyon")
                                 {
-                                    AlphaMaps[(int) alphaX, (int) alphaY, 0] = 1.0f;
-                                }                                
+                                    AlphaMaps[(int) alphaX, (int) alphaY, 3] = 1.0f;
+                                } */                               
                         }
                     }
                 }
@@ -293,7 +378,7 @@ public class MapCreator : MonoBehaviour
                 ID = id
             });
             Map[x, y] = (terrain, id, elevation);
-            Grow(x, y, 8, MapTiles[id]);
+            Grow(x, y, 1, MapTiles[id]);
         }
 
         Brushes = new Dictionary<string, Texture2D[]>()
