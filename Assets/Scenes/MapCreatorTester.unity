@@ -272,11 +272,12 @@ MonoBehaviour:
   InstantiateTiles: 0
   BrushStrokeCount: 10
   Ocean: {fileID: 0}
+  DrawGrid: 1
   growStrenthFalloff: 0.6
-  SplatAmount: 500
+  SplatAmount: 50
   TerrainObject: {fileID: 630469631}
   Recreate: 1
-  GrowChildrenAmount: 1
+  GrowChildrenAmount: 4
   MaxElevation: 0.3
   MinElevation: 0.1
 --- !u!1001 &312102651
